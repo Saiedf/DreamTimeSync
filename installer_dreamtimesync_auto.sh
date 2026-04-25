@@ -16,7 +16,7 @@
 # wget -O /tmp/installer_dreamtimesync_auto.sh "https://raw.githubusercontent.com/Saiedf/DreamTimeSync/main/installer_dreamtimesync_auto.sh" && chmod 755 /tmp/installer_dreamtimesync_auto.sh && /bin/sh /tmp/installer_dreamtimesync_auto.sh
 # ==========================================================
 
-PACKAGE_NAME='enigma2-plugin-extensions-dreamtimesync'
+PACKAGE_NAME='enigma2-plugin-systemplugins-dreamtimesync'
 LEGACY_PACKAGE_NAME='enigma2-plugin-extensions-dreamtimesync'
 PLUGIN_TITLE='DreamTimeSync'
 PLUGIN_FOLDER='DreamTimeSync'
