@@ -23,7 +23,6 @@ PLUGIN_TITLE='DreamTimeSync'
 PLUGIN_FOLDER='DreamTimeSync'
 PLUGIN_EXTENSIONS_PATH="/usr/lib/enigma2/python/Plugins/Extensions/$PLUGIN_FOLDER"
 PLUGIN_SYSTEM_PATH="/usr/lib/enigma2/python/Plugins/SystemPlugins/$PLUGIN_FOLDER"
-PLUGIN_INSTALL_PATH="$PLUGIN_SYSTEM_PATH"
 
 REPO_USER='Saiedf'
 REPO_NAME='DreamTimeSync'
@@ -453,15 +452,6 @@ find_old_plugin_paths() {
     echo "$FOUND_PATHS" | sed 's/^ *//'
 }
 
-ensure_install_directory() {
-    if [ ! -d "$PLUGIN_INSTALL_PATH" ]; then
-        mkdir -p "$PLUGIN_INSTALL_PATH" || return 1
-        say "Created plugin directory: $PLUGIN_INSTALL_PATH"
-    fi
-
-    return 0
-}
-
 remove_installed_package() {
     REMOVED_BY_MANAGER=0
     PACKAGE_TO_REMOVE=''
@@ -500,6 +490,10 @@ remove_old_plugin_paths() {
     PATH_REMOVE_RET=0
     OLD_PLUGIN_PATHS="$(find_old_plugin_paths)"
 
+    if [ -z "$OLD_PLUGIN_PATHS" ]; then
+        return 0
+    fi
+
     for OLD_PLUGIN_PATH in $OLD_PLUGIN_PATHS; do
         if [ -d "$OLD_PLUGIN_PATH" ]; then
             say "Removing old plugin path: $OLD_PLUGIN_PATH"
@@ -511,22 +505,13 @@ remove_old_plugin_paths() {
         fi
     done
 
-    if [ $PATH_REMOVE_RET -ne 0 ]; then
-        return $PATH_REMOVE_RET
-    fi
-
-    ensure_install_directory || return 1
-    return 0
+    return $PATH_REMOVE_RET
 }
 
 confirm_old_version_removal() {
     OLD_PLUGIN_PATHS="$(find_old_plugin_paths)"
 
     if [ -z "$OLD_VERSION" ] && [ -z "$OLD_PLUGIN_PATHS" ]; then
-        ensure_install_directory || {
-            say 'Failed to prepare the DreamTimeSync plugin directory.'
-            exit 1
-        }
         return 0
     fi
 
@@ -756,14 +741,6 @@ download_package
 DOWNLOAD_RET=$?
 
 if [ $DOWNLOAD_RET -eq 0 ] && [ -s "$MY_TMP_FILE" ]; then
-    ensure_install_directory
-    DIR_RET=$?
-    if [ $DIR_RET -ne 0 ]; then
-        say ''
-        say 'Failed to prepare the DreamTimeSync plugin directory.'
-        exit 1
-    fi
-
     say ''
     say "$MY_SEP"
     say 'Installation started'
